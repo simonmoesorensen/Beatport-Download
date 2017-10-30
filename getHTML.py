@@ -15,23 +15,29 @@ USAGE:
 """
 
 import urllib
-import requests
 from bs4 import BeautifulSoup
 
 def getHTML(link):
-    
+
     #Initial list
     songList = []
+    
+    #Display for user
+    print("\nPlease wait while the program initializes...")
 
     #Load the HTML data
     page = urllib.request.urlopen(link)
-    
+
     #Store the HTML data in Beautiful soup format
     soup = BeautifulSoup(page, "lxml")
     
     #Get all song titles
     songName = soup.find_all("p", class_="buk-track-title")
     songArtists = soup.find_all("p", class_="buk-track-artists")
+    
+    #Get genre
+    genre = soup.find(class_="interior-title")
+    genre = genre.h1.string
     
     #Run over i amount of songs and get their titles and artists
     for i in range(len(songName)):
@@ -47,6 +53,6 @@ def getHTML(link):
         
         songList.append(song)
         
-    return songList
+    return songList,genre
     
     
