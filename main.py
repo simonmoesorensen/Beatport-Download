@@ -12,9 +12,10 @@ OUTPUT:
 
 from getHTML import getHTML
 from selenium import webdriver
-from selenium.webdriver.remote.errorhandler import NoSuchElementException
+from selenium.webdriver.remote.errorhandler import NoSuchElementException, WebDriverException
 import time
 import os,sys
+from sys import platform as _platform
 
 
 print("""
@@ -35,9 +36,17 @@ dir = os.path.dirname(os.path.realpath(sys.argv[0]))
 ext = os.path.join(dir, "chromeExt")
 adblock = os.path.join(ext, "adblock.crx")
 
-#Set download path
-desktop = os.path.expanduser("~\Desktop\Beatport {}".format(genre))
- 
+#Crossplatform support
+if _platform == "darwin":
+    # MAC OS X
+    cDriver = "/chromedriver" #Set chromedriver path
+    desktop = os.path.expanduser("~/Desktop/Beatport {}".format(genre)) #Set download path
+    
+elif (_platform == "win32") or (_platform == "win64"):
+    # Windows
+    cDriver = "/chromedriver.exe" #Set chromedriver path
+    desktop = os.path.expanduser("~\Desktop\Beatport {}".format(genre)) #Set download path
+
 #Setting options
 chop = webdriver.ChromeOptions()
 
@@ -50,8 +59,9 @@ chop.add_experimental_option("prefs", {
   "safebrowsing.enabled": True
 }) #Sets download location
 
+   
 #Setup browser driver with options
-driver = webdriver.Chrome(chrome_options = chop)
+driver = webdriver.Chrome(ext+cDriver,chrome_options = chop)
 driver.set_window_size(429,551)
 
 driver.get("https://www.mp3juices.cc/")
@@ -82,6 +92,8 @@ for song in songList:
         
         driver.find_element_by_link_text("Download").click() #Again...
         
+        time.sleep(0.5)
+        
         searchBar.clear() #Clear search bar
         
         #Check if stupid add tab opened
@@ -93,6 +105,11 @@ for song in songList:
            
     except NoSuchElementException:
         print("Download failed, moving on")
+        searchBar.clear()
+        
+    except WebDriverException:
+        print("Download failed, moving on")
+        searchBar.clear()
         
     
 driver.quit()
