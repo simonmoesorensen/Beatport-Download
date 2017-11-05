@@ -97,7 +97,6 @@ driver.switch_to_window(tabs[0])
 
 #Initial variables
 failed = []
-wait = 1
 
 for song in songList:    
     try:
@@ -112,7 +111,7 @@ for song in songList:
         time.sleep(1) #Give script time to rest..
         
         #wait until we can click on download
-        download1 = WebDriverWait(driver, wait).until(
+        download1 = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "div.options")));
         
         download1.click();
@@ -120,7 +119,7 @@ for song in songList:
         #wait until we can click on download
         while True:
             try:
-                download2 = WebDriverWait(driver, 15).until(
+                download2 = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "a.url")));
                 
                 download2.click();
